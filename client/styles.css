@@ -2,4 +2,8 @@
 
 /* Note: an asteroid image is included in this repo.
 Feel free to use it if you like. */
+.board {
+  background: black;
+  border: 2px solid black;
+}
 
