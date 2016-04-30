@@ -25,6 +25,21 @@ window.drag = d3.behavior.drag().on('drag', function() {
   d3.select(this).attr('cx', d3.event.x).attr('cy', d3.event.y); 
 });
 
+window.checkCollisions = function() {
+  var enemies = d3.selectAll('.enemy');
+  var players = d3.select('.player');
+
+  enemies.each(function() {
+    var [x, y, r] = [d3.select(this).attr('cx'), d3.select(this).attr('cy'), d3.select(this).attr('r')];
+    var [a, b, pr] = [players.attr('cx'), players.attr('cy'), players.attr('r')];
+
+    var combinedR = Math.sqrt( Math.pow(x - a, 2) + Math.pow(y - b, 2));
+    if ( combinedR < (r + pr) ) {
+      console.log ( 'collision!' );
+    }
+  });
+};
+
 window.player = function(data) {
   var playerSelect = d3.select('.board')
     .selectAll('.player')
@@ -66,7 +81,12 @@ window.randomEnemies = function() {
   }
 };
 
-window.interval = setInterval(() => { 
+window.enemyMoveInterval = setInterval(() => {
   randomEnemies();
   updateEnemies(enemyArray);
 }, 1000);
+
+window.checkCollisionInterval = setInterval( () => {
+  checkCollisions();
+}, 1);
+
