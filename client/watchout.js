@@ -1,11 +1,8 @@
-// start slingin' some d3 here.
-
 window.updateEnemies = function(data) {
   var enemies = d3.select('.board')
     .selectAll('.enemy')
     .data(data, obj => obj.key);
 
-  // create new enemies as required
   enemies.enter()
     .append('circle')
     .attr('class', 'enemy')
@@ -25,6 +22,24 @@ window.drag = d3.behavior.drag().on('drag', function() {
   d3.select(this).attr('cx', d3.event.x).attr('cy', d3.event.y); 
 });
 
+window.updateScores = function() {
+  var collisionSelect = d3.select('.collisions').select('span');
+  var currentCollisions = +collisionSelect.text() + 1;
+  collisionSelect.text(currentCollisions);
+
+  var currentScoreSelect = d3.select('.current').select('span');
+  var currentScore = +currentScoreSelect.text();
+
+  var highScoreSelect = d3.select('.highScore').select('span');
+  var highScore = +highScoreSelect.text();
+
+  if (highScore < currentScore) {
+    highScoreSelect.text(currentScore);
+  }
+
+  currentScoreSelect.text('0');
+};
+
 window.checkCollisions = function() {
   var enemies = d3.selectAll('.enemy');
   var players = d3.select('.player');
@@ -35,7 +50,7 @@ window.checkCollisions = function() {
 
     var combinedR = Math.sqrt( Math.pow(x - a, 2) + Math.pow(y - b, 2));
     if ( combinedR < (r + pr) ) {
-      console.log ( 'collision!' );
+      updateScores();
     }
   });
 };
@@ -56,7 +71,6 @@ window.player = function(data) {
     .call(drag);
 
   playerSelect.exit().remove();
-
 };
 
 player([{ 
@@ -69,7 +83,7 @@ player([{
 
 window.enemyArray = [];
 window.randomEnemies = function() {
-  for (var i = 0; i < 40; i++) {
+  for (var i = 0; i < 20; i++) {
     if (enemyArray[i] === undefined) {
       enemyArray[i] = {};
     }
@@ -90,3 +104,8 @@ window.checkCollisionInterval = setInterval( () => {
   checkCollisions();
 }, 1);
 
+window.addScore = setInterval( () => {
+  var currentScoreSelect = d3.select('.current').select('span');
+  var currentScore = +currentScoreSelect.text() + 10;
+  currentScoreSelect.text(currentScore);
+}, 10);
