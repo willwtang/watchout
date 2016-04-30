@@ -4,6 +4,8 @@
 Feel free to use it if you like. */
 .board {
   background: black;
+  width: 100%;
+  height: 500px;
   border: 2px solid black;
 }
 
