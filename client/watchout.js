@@ -15,18 +15,22 @@ window.updateEnemies = function(data) {
   enemies.exit().remove();
   enemies.transition()
     .attr('cy', obj => obj.y)
-    .attr('cx', obj => obj.x);
+    .attr('cx', obj => obj.x)
+    .attr('fill', obj => obj.color);
 };
 
 window.drag = d3.behavior.drag().on('drag', function() { 
   d3.select(this).attr('cx', d3.event.x).attr('cy', d3.event.y); 
 });
 
-window.updateScores = function() {
+window.updateCollisions = _.throttle(function() {
   var collisionSelect = d3.select('.collisions').select('span');
   var currentCollisions = +collisionSelect.text() + 1;
   collisionSelect.text(currentCollisions);
+}, 1000);
 
+window.updateScores = function() {
+  updateCollisions();
   var currentScoreSelect = d3.select('.current').select('span');
   var currentScore = +currentScoreSelect.text();
 
@@ -82,8 +86,18 @@ player([{
 }]);
 
 window.enemyArray = [];
+
+window.getRandomColor = function() {
+  var letters = '0123456789ABCDEF'.split('');
+  var color = '#';
+  for (var i = 0; i < 6; i++ ) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
 window.randomEnemies = function() {
-  for (var i = 0; i < 20; i++) {
+  for (var i = 0; i < 60; i++) {
     if (enemyArray[i] === undefined) {
       enemyArray[i] = {};
     }
@@ -92,6 +106,7 @@ window.randomEnemies = function() {
     obj.x = Math.random() * document.documentElement.clientWidth;
     obj.y = Math.random() * 500;
     obj.r = Math.random() * 20;
+    obj.color = getRandomColor();
   }
 };
 
